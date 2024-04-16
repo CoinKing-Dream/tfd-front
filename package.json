@@ -1,0 +1,99 @@
+{
+  "name": "tfd-metro",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build",
+    "devbuild": "vue-cli-service build --mode development",
+    "lint": "vue-cli-service lint",
+    "express": "vue-cli-service express:watch",
+    "express:run": "vue-cli-service express:run",
+    "express:run80": "vue-cli-service express:run --port 80",
+    "test": "mocha '.\\srv\\test\\**\\*.test.js' --recursive --timeout 20000"
+  },
+  "dependencies": {
+    "@babel/polyfill": "^7.6.0",
+    "@mdi/font": "^5.8.55",
+    "axios": "^0.19.0",
+    "chai": "^4.2.0",
+    "chart.js": "^2.8.0",
+    "chartjs-plugin-annotation": "^0.5.7",
+    "core-js": "^2.6.5",
+    "cors": "^2.8.5",
+    "leaflet": "^1.5.1",
+    "leaflet-velocity": "^1.4.4",
+    "lodash": "^4.17.15",
+    "log4js": "^6.1.2",
+    "luxon": "^1.23.0",
+    "moment": "^2.24.0",
+    "mongodb": "^3.3.2",
+    "socket.io": "^2.3.0",
+    "socket.io-client": "^2.3.0",
+    "topojson-client": "^3.1.0",
+    "tunnel-ssh": "^4.1.4",
+    "util": "^0.12.1",
+    "vue": "^2.6.10",
+    "vue-axios": "^2.1.4",
+    "vue-chartjs": "^3.4.2",
+    "vue-cookies": "^1.7.0",
+    "vue-datetime": "^1.0.0-beta.11",
+    "vue-router": "^3.0.3",
+    "vue2-leaflet": "^2.2.1",
+    "vuetify": "^2.1.2",
+    "vuex": "^3.0.1",
+    "websocket": "^1.0.30",
+    "weekstart": "^1.0.1"
+  },
+  "devDependencies": {
+    "@vue/cli-plugin-babel": "^3.9.0",
+    "@vue/cli-plugin-eslint": "^3.9.0",
+    "@vue/cli-service": "^3.9.0",
+    "@vue/eslint-config-standard": "^4.0.0",
+    "babel-eslint": "^10.0.1",
+    "body-parser": "^1.19.0",
+    "chai-http": "^4.3.0",
+    "cookie-parser": "^1.4.4",
+    "debug": "^4.1.1",
+    "ejs": "^2.6.2",
+    "eslint": "^5.16.0",
+    "eslint-config-prettier": "^6.0.0",
+    "eslint-plugin-prettier": "^3.1.0",
+    "eslint-plugin-vue": "^5.0.0",
+    "http-errors": "^1.7.3",
+    "jsonwebtoken": "^8.5.1",
+    "less-middleware": "^3.1.0",
+    "mocha": "^6.2.0",
+    "morgan": "^1.9.1",
+    "multer": "^1.4.2",
+    "node-sass": "^4.12.0",
+    "prettier": "^1.18.2",
+    "prettier-eslint": "^9.0.0",
+    "sass-loader": "^7.1.0",
+    "vue-cli-plugin-express": "^1.0.2",
+    "vue-template-compiler": "^2.6.10"
+  },
+  "eslintConfig": {
+    "root": true,
+    "env": {
+      "node": true
+    },
+    "extends": [
+      "plugin:vue/essential",
+      "eslint:recommended"
+    ],
+    "rules": {},
+    "parserOptions": {
+      "parser": "babel-eslint"
+    }
+  },
+  "postcss": {
+    "plugins": {
+      "autoprefixer": {}
+    }
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions"
+  ]
+}

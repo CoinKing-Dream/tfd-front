@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>TFD METRO | 東京消防庁</title>
+    <script>
+      // 認証トークン取得
+      window.onload = function () {
+        var params = location.href.split("?")[1]
+        var list={}
+        if (params && params.lenhth > 0){
+          params.split("&").forEach( function(item) {
+            item = item.split("=")
+            list[item[0]]=item[1]
+          })
+        }
+        if(list.access_token) document.cookie = "list='"+list.access_token + "'";
+        location.href = "./index.html"
+      }
+    </script>
+  </head>
+  <body>
+    <noscript>
+      <strong>We're sorry but this side doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
+    </noscript>
+  </body>
+</html>
