@@ -30,15 +30,58 @@
           >
             {{ o.value }}
           </div>
-          <div class="text" v-if="item.text">{{item.text}}</div>
+          <div class="text" v-if="item.text">{{ item.text }}</div>
         </div>
       </v-col>
     </v-row>
+    <template v-if="selectedRisk.type === Risk.RAIN">
+      <div class="rain-legend mt-2">
+        <div class="pa-2" style="background-color: rgba(255,255,255,0.7);">
+          <p>
+            大雨災害発生の危険度が<br/>急激に高まっている<br/>線状降水帯の雨域
+          </p>
+          <v-row no-gutters>
+            <v-col cols="3">
+              <svg width="24" height="24">
+                <ellipse
+                  cx="12"
+                  cy="12"
+                  rx="10"
+                  ry="5"
+                  style="fill:rgba(0,0,0,0);stroke:red;stroke-width:3"
+                />
+              </svg>
+            </v-col>
+            <v-col>
+              現在時刻の解析
+            </v-col>
+          </v-row>
+          <v-row no-gutters>
+            <v-col cols="3">
+              <svg width="24" height="24">
+                <ellipse
+                  cx="12"
+                  cy="12"
+                  rx="10"
+                  ry="5"
+                  style="fill:rgba(0,0,0,0);stroke:red;stroke-width:3"
+                  stroke-dasharray="4 2"
+                />
+              </svg>
+            </v-col>
+            <v-col>
+              10~30分先の解析
+            </v-col>
+          </v-row>
+        </div>
+      </div>
+    </template>
   </div>
 </template>
 
 <script>
 import { rootGetters } from "../../../../store/store-functions";
+import { Risk } from "@/enums/Risk";
 
 export default {
   name: "ColorLegend",
@@ -47,9 +90,19 @@ export default {
       default: []
     }
   },
+  data() {
+    return {
+      Risk: Risk
+    };
+  },
   computed: {
     colorLegend() {
       return this.$store.getters[rootGetters.COLOR_LEGEND](
+        this.analysisMapData.storeId
+      );
+    },
+    selectedRisk() {
+      return this.$store.getters[rootGetters.SELECTED_RISK](
         this.analysisMapData.storeId
       );
     }
@@ -89,5 +142,15 @@ export default {
 }
 .text {
   font-size: 12px;
+}
+.rain-legend {
+  clear:both;
+  font-size: 12px;
+  text-align: left;
+  width: fit-content;
+  float: right;
+  p {
+    font-weight: bold;
+  }
 }
 </style>

@@ -49,7 +49,6 @@ import BaseTileControl from "./BaseTileControl";
 import RealtimeDataControl from "./RiskControl";
 import FeatureControl from "./FeatureControl";
 import DateControl from "./date-control/DateControl";
-import LayerControl from "./LayerControl";
 import DialogControl from "./dialog-control/DialogControl";
 import WindViewer from "./WindViewer";
 import ZoomControl from "./ZoomControl";
@@ -72,7 +71,6 @@ export default {
     ZoomControl,
     WindViewer,
     DialogControl,
-    LayerControl,
     DateControl,
     FeatureControl,
     RealtimeDataControl,

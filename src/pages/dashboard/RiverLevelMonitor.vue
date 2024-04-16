@@ -7,7 +7,7 @@
         :items="riverLevelRows"
         :items-per-page="-1"
         hide-default-footer
-        class="data-table full-height"
+        :class="{'data-table full-height': true, 'training-mode':trainingMode}"
         @click:row="onClickRow"
       >
         <template v-slot:item.riverLevel="{ item }">
@@ -54,7 +54,12 @@
           :center="center"
           :options="{ zoomControl: false }"
         >
-          <l-tile-layer :url="url" :center="center" :zoom="zoom" :attribution="attribution"></l-tile-layer>
+          <l-tile-layer
+            :url="url"
+            :center="center"
+            :zoom="zoom"
+            :attribution="attribution"
+          ></l-tile-layer>
           <template v-for="o in riverLevelRows">
             <l-marker :lat-lng="o.latlng">
               <l-icon :icon-size="[16, 16]" :icon-anchor="[8, 16]">
@@ -105,7 +110,7 @@ export default {
       mapLabel: Risk.OBSERVATORY.string,
       url: "https://cyberjapandata.gsi.go.jp/xyz/pale/{z}/{x}/{y}.png",
       attribution:
-          '<a href="https://maps.gsi.go.jp/development/ichiran.html" target="_blank">地理院タイル</a>',
+        '<a href="https://maps.gsi.go.jp/development/ichiran.html" target="_blank">地理院タイル</a>',
       zoom: 11,
       center: [35.693825, 139.703356],
       riverLevelRows: [],
@@ -178,6 +183,9 @@ export default {
           this.userInfo.riverLevelObservatories.includes(o._id)
         );
       });
+    },
+    trainingMode() {
+      return this.$store.getters[rootGetters.TRAINING_MODE];
     }
   },
   watch: {
@@ -224,7 +232,7 @@ export default {
       const pastHref = subWindow.location.href;
       const url = `${window.location.origin}/index.html#/analysis?tile=${
         BaseTile.GRAY.index
-      }&risk=${Risk.OBSERVATORY.index}&baseDate=${this.baseDate.format("X")}`;
+      }&risk=${Risk.OBSERVATORY.index}&baseDate=${this.baseDate.format("X")}&training=${this.trainingMode}`;
 
       if (pastHref !== "about:blank") {
         subWindow.close();
@@ -447,6 +455,9 @@ export default {
     padding: 5px 16px !important;
     color: white !important;
     font-size: 10px;
+  }
+  .training-mode .data-table-header {
+    background-color: #631d21 !important;
   }
   .data-table td {
     font-size: 13px !important;

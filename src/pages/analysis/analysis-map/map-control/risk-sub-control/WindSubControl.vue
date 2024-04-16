@@ -1,7 +1,7 @@
 <template>
   <div class="wind-sub-control">
     <v-row no-gutters align="center" class="mb-1">
-      <v-col>
+      <v-col cols="auto">
         <h5>
           高度（地上）
         </h5>
@@ -130,6 +130,7 @@ export default {
   }
   .progress-circular {
     line-height: 1;
+    margin-bottom: 2px;
   }
 }
 </style>

@@ -74,7 +74,8 @@ export const store = {
     alertCheckDate: null,
     hasChangeDate: false,
     userInfo: null,
-    linkedObservatories: null
+    linkedObservatories: null,
+    trainingMode: false
   },
   getters: {
     [functions.getters.MULTI_MAP_SHOW](state) {
@@ -103,7 +104,10 @@ export const store = {
     },
     [functions.getters.LINKED_OBSERVATORY_DATA](state) {
       return state.linkedObservatories;
-    }
+    },
+    [functions.getters.TRAINING_MODE](state) {
+      return state.trainingMode;
+    },
   },
   mutations: {
     [functions.mutations.UPDATE_MULTI_MAP_SHOW](state, data) {
@@ -136,6 +140,9 @@ export const store = {
     },
     [functions.mutations.UPDATE_LINKED_OBSERVATORY_DATA](state, data) {
       state.linkedObservatories = data;
+    },
+    [functions.mutations.UPDATE_TRAINING_MODE](state, data) {
+      state.trainingMode = data;
     }
   },
   actions: {

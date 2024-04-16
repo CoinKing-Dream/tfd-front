@@ -1,6 +1,6 @@
 <template>
   <div class="analysis">
-    <div class="footer">
+    <div class="" :class="{ footer: true, 'training-mode': trainingMode }">
       <div class="map-title">
         <v-row v-if="selectedRisk" no-gutters align="center" justify="center">
           <v-col cols="auto">
@@ -104,16 +104,18 @@ export default {
         return this.alerts.length;
       }
       const notRead = _.filter(this.alerts, alert => {
-        return this.alertCheckDate.diff(moment(alert.time, "YYYY/MM/DD HH:mm")) <= 0;
+        return (
+          this.alertCheckDate.diff(moment(alert.time, "YYYY/MM/DD HH:mm")) <= 0
+        );
       });
 
       return notRead.length;
     },
-    rootBaseDate() {
-      return this.$store.getters[rootGetters.ALERT_BASE_DATE];
-    },
     hasChangeDate() {
       return this.$store.getters[rootGetters.HAS_CHANGE_DATE];
+    },
+    trainingMode() {
+      return this.$store.getters[rootGetters.TRAINING_MODE];
     }
   },
   watch: {
@@ -126,6 +128,16 @@ export default {
     }
   },
   created() {
+    if (typeof this.$route.query.training !== "undefined") {
+      this.$store.commit(
+        rootMutations.UPDATE_TRAINING_MODE,
+        this.$route.query.training === 'true'
+      );
+
+      const query = Object.assign({}, this.$route.query);
+      delete query.training;
+      this.$router.replace({ query });
+    }
     if (typeof this.$route.query.tile !== "undefined") {
       this.urlParameters.selectedBaseTile = BaseTile.getBaseTileFromIndex(
         parseInt(this.$route.query.tile)
@@ -145,6 +157,7 @@ export default {
       delete query.baseDate;
       this.$router.replace({ query });
     }
+
     this.initMapData(this.leftStoreId, this.urlParameters);
     this.initMapData(this.rightStoreId, this.urlParameters);
   },
@@ -303,6 +316,9 @@ $footer-height: 35px;
         border-bottom-color: #2c3e50;
       }
     }
+  }
+  .training-mode {
+    background-color: #631d21;
   }
 }
 </style>

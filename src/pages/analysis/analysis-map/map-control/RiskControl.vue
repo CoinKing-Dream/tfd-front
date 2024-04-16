@@ -45,23 +45,38 @@ export default {
       return this.$store.getters[rootGetters.SELECTED_RISK](
         this.analysisMapData.storeId
       );
+    },
+    trainingMode() {
+      return this.$store.getters[rootGetters.TRAINING_MODE];
+    }
+  },
+  watch: {
+    trainingMode() {
+      this.init();
     }
   },
   created() {
-    _.forEach(Risk, risk => {
-      if (typeof risk === "object") {
-        this.panelData.items.push({
-          label: risk.string,
-          value: risk
-        });
-      }
-    });
-
-    this.panelData.selectedItem = _.find(this.panelData.items, o => {
-      return this.selectedRisk.type === o.value;
-    });
+    this.init();
   },
   methods: {
+    init() {
+      const panelDataItems = []
+      _.forEach(Risk, risk => {
+        if (typeof risk === "object") {
+          if (!this.trainingMode && risk.index === Risk.FLOOD_ZONE_ESTIMATION_SITE.index) {
+            return;
+          }
+          panelDataItems.push({
+            label: risk.string,
+            value: risk
+          });
+        }
+      });
+      this.panelData.items = panelDataItems;
+      this.panelData.selectedItem = _.find(this.panelData.items, o => {
+        return this.selectedRisk.type === o.value;
+      });
+    },
     callback(selectedItem) {
       const storeId = this.analysisMapData.storeId;
       this.$store.commit(rootMutations.UPDATE_SELECTED_RISK, {
