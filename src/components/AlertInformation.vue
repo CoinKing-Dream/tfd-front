@@ -3,7 +3,7 @@
     tile
     class="alert-card"
     @click="showAlert()"
-    :color="isRead(info.time) ? 'rgba(255,255,255,0.1)' : 'rgba(13,71,161,0.6)'"
+    :color="listening && !isRead(info.time) ? 'rgba(13,71,161,0.6)': 'rgba(255,255,255,0.1)'"
   >
     <v-card-text>
       <v-row
@@ -57,7 +57,10 @@ export default {
   computed: {
     alertCheckDate() {
       return this.$store.getters[rootGetters.ALERT_CHECK_DATE];
-    }
+    },
+    listening() {
+      return this.$store.getters[rootGetters.ALERT_LISTENING];
+    },
   },
   methods: {
     showAlert() {

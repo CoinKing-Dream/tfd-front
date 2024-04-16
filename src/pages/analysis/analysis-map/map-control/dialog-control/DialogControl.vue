@@ -1,12 +1,12 @@
 <template>
-  <v-card>
-    <v-toolbar dense flat color="primary">
-      <v-btn dark icon @click="back">
+  <v-card tile>
+    <v-toolbar dense flat color="#DFDFDF" height="30px" class="px-1">
+      <v-btn icon x-small @click="back">
         <v-icon>mdi-arrow-left</v-icon>
       </v-btn>
       <v-toolbar-title>{{ title }}</v-toolbar-title>
       <v-spacer></v-spacer>
-      <v-btn dark icon @click="closeDialog">
+      <v-btn icon x-small @click="closeDialog">
         <v-icon>mdi-close</v-icon>
       </v-btn>
     </v-toolbar>
@@ -116,10 +116,12 @@ export default {
   height: 100%;
   background-color: #f2f3f8;
   .v-toolbar__title {
-    color: white;
+    font-size: 14px;
+    font-weight: bold;
+    color:rgba(0,0,0,.54);
   }
 }
 .contents-area {
-  height: calc(100% - 48px);
+  height: calc(100% - 30px);
 }
 </style>

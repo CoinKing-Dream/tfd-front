@@ -32,7 +32,11 @@
             ></river-level-monitor>
           </v-card>
         </div>
-        <v-row no-gutters class="map-list-area pa-1" :class="{'system-message': sysMsg}">
+        <v-row
+          no-gutters
+          class="map-list-area pa-1"
+          :class="{ 'system-message': sysMsg }"
+        >
           <template v-for="(map, index) in maps">
             <v-col class="pa-1" :key="index">
               <v-card class="map-card" @click="to('analysis', map)">
@@ -57,14 +61,19 @@
             ></v-responsive>
           </template>
         </v-row>
-        <v-row v-if="sysMsg" no-gutters align="center" class="system-message-area">
+        <v-row
+          v-if="sysMsg"
+          no-gutters
+          align="center"
+          class="system-message-area"
+        >
           <v-col cols="12">{{ sysMsg }}</v-col>
         </v-row>
       </v-col>
       <v-col
         cols="3"
         class="alert-panel"
-        :class="{ 'training-mode': trainingMode !== '平常' }"
+        :class="{ 'training-mode': trainingMode }"
       >
         <v-row no-gutters class="pa-2 mb-2" align="center" justify="center">
           <div class="logo-area">
@@ -102,29 +111,41 @@
                 </template>
               </datetime>
             </v-col>
-            <v-col cols="auto" class="training-mode-area">
-              <v-btn
-                small
-                @click="trainingModeItemsShow = !trainingModeItemsShow"
-                color="black"
-                tile
-                dark
-                height="22"
-                >モード</v-btn
-              >
-              <v-list
-                v-if="trainingModeItemsShow"
-                dense
-                class="training-mode-list"
-              >
-                <v-list-item
-                  v-for="(item, index) in trainingModeItems"
-                  :key="index"
-                  @click="updateTrainingMode(item)"
-                  :class="{ active: trainingMode === item ? 'active' : '' }"
-                  >{{ item }}</v-list-item
-                >
-              </v-list>
+            <v-col cols="auto">
+              <v-tooltip bottom>
+                <template v-slot:activator="{ on, attrs }">
+                  <v-btn
+                      icon
+                      color="#ff9800"
+                      @click="onClickNow"
+                      v-bind="attrs"
+                      v-on="on"
+                  >
+                    <v-icon>mdi-update</v-icon>
+                  </v-btn>
+                </template>
+                <div>【平常時モード】</div>
+                <span>現時刻に移動し、平常時に変更します</span>
+              </v-tooltip>
+            </v-col>
+            <v-col cols="auto" class="training-mode-area mr-2">
+              <v-tooltip bottom>
+                <template v-slot:activator="{ on, attrs }">
+                  <v-btn
+                    icon
+                    @click="trainingModeItemsShow = true"
+                    v-bind="attrs"
+                    v-on="on"
+                    color="white"
+                  >
+                    <v-icon>mdi-table-clock</v-icon>
+                  </v-btn>
+                </template>
+                <div>
+                  【訓練時モード】
+                </div>
+                <span>訓練リストを表示します</span>
+              </v-tooltip>
             </v-col>
           </v-row>
         </div>
@@ -137,9 +158,9 @@
                 :color="
                   tab === 'alert'
                     ? 'rgba(0,0,0,0.4)'
-                    : trainingMode === '平常'
-                    ? '#12263f'
-                    : '#631d21'
+                    : trainingMode
+                    ? '#631d21'
+                    : '#12263f'
                 "
                 @click="tab = 'alert'"
               >
@@ -154,9 +175,9 @@
                 :color="
                   tab === 'tweet'
                     ? 'rgba(0,0,0,0.4)'
-                    : trainingMode === '平常'
-                    ? '#12263f'
-                    : '#631d21'
+                    : trainingMode
+                    ? '#631d21'
+                    : '#12263f'
                 "
                 @click="tab = 'tweet'"
               >
@@ -171,7 +192,7 @@
             <template v-if="tab === 'tweet'">
               <tweet-list
                 :base-date="baseDate"
-                :auto-update="trainingMode === '平常'"
+                :auto-update="!trainingMode"
               ></tweet-list>
             </template>
           </div>
@@ -191,6 +212,11 @@
         <settings @close-dialog="dialog = false"></settings>
       </v-card>
     </v-dialog>
+    <risk-history-table
+      :dialog="trainingModeItemsShow"
+      @close="trainingModeItemsShow = false"
+      @setDate="onClickHistoryDate"
+    ></risk-history-table>
   </div>
 </template>
 
@@ -201,40 +227,39 @@ import { Datetime } from "vue-datetime";
 import { BaseTile } from "../../enums/BaseTile";
 import { Risk } from "../../enums/Risk";
 
-import { rootMutations } from "../../store/store-functions";
+import {rootGetters, rootMutations} from "../../store/store-functions";
 
 import BaseMap from "../../components/base-map/BaseMap";
 import AlertWarning from "../../components/AlertWarning";
 import RiverLevelMonitor from "./RiverLevelMonitor";
 import TweetList from "./TweetList";
-import { LMap, LTileLayer } from "vue2-leaflet";
 import Settings from "../settings/Settings";
 import WeatherForecast from "./WeatherForecast";
 import axios from "axios";
+import RiskHistoryTable from "@/components/RiskHistoryTable";
 
 export default {
   name: "Dashboard",
   components: {
+    RiskHistoryTable,
     WeatherForecast,
     Settings,
     TweetList,
     RiverLevelMonitor,
     AlertWarning,
     BaseMap,
-    LMap,
-    LTileLayer,
     Datetime
   },
   data() {
     return {
       sysMsg: null,
       dialog: false,
+      dialog1: false,
       tab: "alert",
       baseDate: moment(),
       timePickerValue: moment().toISOString(),
       currentDate: moment().toISOString(),
       autoUpdateInterval: null,
-      trainingMode: "平常",
       trainingModeItems: ["平常", "(訓練モード)台風", "(訓練モード)線状降水帯"],
       trainingModeItemsShow: false,
       riverLevelMonitorStoreId: -1,
@@ -285,11 +310,21 @@ export default {
       subWindow: null
     };
   },
+  computed: {
+    trainingMode: {
+      get() {
+        return this.$store.getters[rootGetters.TRAINING_MODE];
+      },
+      set(data) {
+        this.$store.commit(rootMutations.UPDATE_TRAINING_MODE, data)
+      }
+    },
+  },
   watch: {
     trainingMode() {
       this.$store.commit(
         rootMutations.UPDATE_ALERT_LISTENING,
-        this.trainingMode === "平常"
+        !this.trainingMode
       );
     },
     timePickerValue() {
@@ -298,13 +333,13 @@ export default {
         return;
       }
       this.updateBaseDate(moment(this.timePickerValue));
-    }
+    },
   },
   created() {
     this.$store.commit(rootMutations.UPDATE_ALERT_BASE_DATE, this.baseDate);
     this.$store.commit(
       rootMutations.UPDATE_ALERT_LISTENING,
-      this.trainingMode === "平常"
+      !this.trainingMode
     );
 
     _.forEach(this.maps, (map, index) => {
@@ -335,7 +370,7 @@ export default {
       if (path === "analysis") {
         url = `${window.location.origin}/index.html#/${path}?tile=${
           mapInfo.baseTile.index
-        }&risk=${mapInfo.risk.index}&baseDate=${this.baseDate.format("X")}`;
+        }&risk=${mapInfo.risk.index}&baseDate=${this.baseDate.format("X")}&training=${this.trainingMode}`;
       }
 
       if (pastHref !== "about:blank") {
@@ -376,31 +411,6 @@ export default {
       });
       this.$store.commit(rootMutations.UPDATE_ALERT_BASE_DATE, this.baseDate);
     },
-    updateTrainingMode(item) {
-      this.resetRiskData();
-      switch (item) {
-        case "平常":
-          this.autoUpdate();
-          this.timePickerValue = moment().toISOString();
-          break;
-        case "(訓練モード)台風":
-          this.changeDate();
-          this.timePickerValue = moment(
-            "2016/08/22 01:00",
-            "YYYY/MM/DD HH:mm"
-          ).toISOString();
-          break;
-        case "(訓練モード)線状降水帯":
-          this.changeDate();
-          this.timePickerValue = moment(
-            "2015/09/09 00:00",
-            "YYYY/MM/DD HH:mm"
-          ).toISOString();
-          break;
-      }
-      this.trainingMode = item;
-      this.trainingModeItemsShow = false;
-    },
     changeDate() {
       // 時刻変更時は自動更新を停止
       clearInterval(this.autoUpdateInterval);
@@ -430,6 +440,24 @@ export default {
           this.sysMsg = null;
           return err;
         });
+    },
+    onClickHistoryDate(date) {
+      this.resetRiskData();
+      this.changeDate();
+      this.timePickerValue = moment(
+        date,
+        "YYYY/MM/DD HH:mm"
+      ).toISOString();
+
+      this.trainingMode = true;
+      this.trainingModeItemsShow = false;
+    },
+    onClickNow() {
+      this.resetRiskData();
+      this.autoUpdate();
+      this.timePickerValue = moment().toISOString();
+
+      this.trainingMode = false;
     }
   }
 };
@@ -438,6 +466,12 @@ export default {
 .date-area {
   .vdatetime-input {
     cursor: pointer;
+    font-size: 20px;
+    height: 100%;
+    line-height: 1;
+  }
+  .vdatetime {
+    line-height: 1;
   }
 }
 </style>
@@ -587,5 +621,29 @@ export default {
 }
 .vdatetime-time-picker__item {
   font-size: 20px;
+}
+.risk-history-table.v-data-table {
+  td {
+    white-space: pre-wrap;
+    padding: 10px 10px;
+    line-height: 1.1;
+    .history-date {
+      color: #00b0ff;
+      text-decoration: underline;
+      cursor: pointer;
+    }
+  }
+  td:nth-child(1) {
+    text-align: center;
+    font-weight: bold;
+    font-size: 16px;
+  }
+  th {
+    background-color: $point-color-3;
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+    color: white !important;
+  }
 }
 </style>

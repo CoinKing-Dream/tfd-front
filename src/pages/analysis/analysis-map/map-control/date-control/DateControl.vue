@@ -23,7 +23,7 @@
           </v-col>
         </v-row>
       </v-col>
-      <v-col class="mr-5">
+      <v-col class="mr-12">
         <slider ref="slider" v-if="selectedRisk.slider"></slider>
       </v-col>
       <v-col
@@ -31,9 +31,33 @@
         class="date-time-select-area"
         cols="auto"
       >
+        <v-row no-gutters class="option-buttons" justify="end">
+          <v-col cols="auto" class="mr-2">
+            <v-tooltip top>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  fab
+                  x-small
+                  :color="trainingMode ? '#631d21' : 'primary'"
+                  dark
+                  @click="dialog = true"
+                  v-bind="attrs"
+                  v-on="on"
+                  ><v-icon>mdi-table-clock</v-icon>
+                </v-btn>
+              </template>
+              <div>
+                【訓練時モード】
+              </div>
+              <span>訓練リストを表示します</span>
+            </v-tooltip>
+          </v-col>
+        </v-row>
         <datetime
           v-model="baseDate"
-          input-class="datetime-picker"
+          :input-class="
+            trainingMode ? 'datetime-picker training' : 'datetime-picker'
+          "
           type="datetime"
           :max-datetime="currentDate"
         >
@@ -42,7 +66,7 @@
               キャンセル
             </v-btn>
           </template>
-          <template slot="button-confirm" 　slot-scope="scope">
+          <template slot="button-confirm" slot-scope="scope">
             <span v-if="scope.step === 'date'">
               <v-btn icon color="indigo">
                 <v-icon>mdi-clock</v-icon>
@@ -62,13 +86,27 @@
                 icon
                 color="rgba(55, 55, 55, 0.72)"
                 @click="updateBaseDatePrevious10Minutes"
-                ><v-icon>mdi-arrow-left-drop-circle</v-icon></v-btn
               >
+                <v-icon>mdi-arrow-left-drop-circle</v-icon>
+              </v-btn>
             </v-col>
             <v-col>
-              <v-btn fab color="warning" class="mb-2" @click="updateLatest()">
-                <v-icon style="width: 100%" large>mdi-update</v-icon>
-              </v-btn>
+              <v-tooltip top>
+                <template v-slot:activator="{ on, attrs }">
+                  <v-btn
+                    v-bind="attrs"
+                    v-on="on"
+                    fab
+                    color="warning"
+                    class="mb-2"
+                    @click="updateLatest()"
+                  >
+                    <v-icon style="width: 100%" large>mdi-update</v-icon>
+                  </v-btn>
+                </template>
+                <div>【平常時モード】</div>
+                <span>現時刻に移動し、平常時に変更します</span>
+              </v-tooltip>
             </v-col>
             <v-col class="text-left">
               <v-btn
@@ -83,6 +121,11 @@
         </div>
       </v-col>
     </v-row>
+    <risk-history-table
+      :dialog="dialog"
+      @close="dialog = false"
+      @setDate="updateRiskDate"
+    ></risk-history-table>
   </div>
 </template>
 
@@ -96,14 +139,14 @@ import {
 } from "../../../../../store/store-functions";
 
 import Slider from "./Slider";
-import BigRiverFloodingSlider from "../BigRiverFloodingControl";
 import { Settings } from "luxon";
+import RiskHistoryTable from "@/components/RiskHistoryTable";
 Settings.defaultLocale = "ja";
 
 export default {
   name: "DateControl",
   components: {
-    BigRiverFloodingSlider,
+    RiskHistoryTable,
     Slider,
     Datetime
   },
@@ -116,7 +159,8 @@ export default {
     return {
       playing: false,
       hasInitialize: false,
-      currentDate: moment().toISOString()
+      currentDate: moment().toISOString(),
+      dialog: false
     };
   },
   computed: {
@@ -138,6 +182,14 @@ export default {
           return;
         }
         this.hasInitialize = true;
+      }
+    },
+    trainingMode: {
+      get() {
+        return this.$store.getters[rootGetters.TRAINING_MODE];
+      },
+      set(data) {
+        this.$store.commit(rootMutations.UPDATE_TRAINING_MODE, data);
       }
     },
     selectedRisk() {
@@ -190,6 +242,7 @@ export default {
     },
     updateLatest() {
       this.hasInitialize = false;
+      this.trainingMode = false;
       const date = moment();
       const storeId = this.analysisMapData.storeId;
       this.$store.commit(rootMutations.UPDATE_BASE_DATE, {
@@ -197,6 +250,11 @@ export default {
         baseDate: date
       });
       this.$store.commit(rootMutations.UPDATE_HAS_CHANGE_DATE, false);
+    },
+    updateRiskDate(date) {
+      this.updateBaseDate(moment(date, "YYYY/MM/DD HH:mm"));
+      this.trainingMode = true;
+      this.dialog = false;
     }
   }
 };
@@ -222,6 +280,9 @@ export default {
   width: 180px;
   text-align: center;
 }
+.training {
+  background-color: #631d21 !important;
+}
 </style>
 <style lang="scss" scoped>
 .play-control-area {
@@ -240,6 +301,13 @@ export default {
   .date-control-buttons {
     position: absolute;
     bottom: 100%;
+    text-align: center;
+    width: 100%;
+  }
+  .option-buttons {
+    position: absolute;
+    bottom: 0;
+    right: 100%;
     text-align: center;
     width: 100%;
   }

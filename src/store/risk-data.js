@@ -310,7 +310,19 @@ const defaultRisks = {
       baseDate: null,
       contents: []
     }
-  }
+  },
+  [Risk.FLOOD_ZONE_ESTIMATION_SITE.key]: {
+    type: Risk.FLOOD_ZONE_ESTIMATION_SITE,
+    displayType: "customLayer",
+    updateType: "realtime",
+    timeAxis: false,
+    slider: false,
+    subControl: false,
+    data: {
+      baseDate: null,
+      contents: []
+    }
+  },
 };
 export const store = {
   namespaced: true,

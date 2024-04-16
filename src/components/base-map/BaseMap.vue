@@ -13,7 +13,10 @@
     <feature-layers></feature-layers>
     <base-tile-layer></base-tile-layer>
     <template v-if="mapObject && selectedRisk">
-      <rain-layer v-if="Risk.RAIN === selectedRisk.type"></rain-layer>
+      <template v-if="Risk.RAIN === selectedRisk.type">
+        <linear-rain-layer></linear-rain-layer>
+        <rain-layer ></rain-layer>
+      </template>
       <wind-layer v-if="Risk.WIND === selectedRisk.type"></wind-layer>
       <small-river-flooding-layer
         v-if="Risk.SMALL_RIVER_FLOODING === selectedRisk.type"
@@ -76,10 +79,12 @@ import LandSlideLayer from "./risk-layer/LandSlideLayer";
 import axios from "axios";
 import XRainLayer from "./risk-layer/XRainLayer";
 import LandSlideMeshLayer from "./risk-layer/LandSlideMeshLayer";
+import LinearRainLayer from "@/components/base-map/risk-layer/LinearRainLayer.vue";
 
 export default {
   name: "BaseMap",
   components: {
+    LinearRainLayer,
     LandSlideMeshLayer,
     XRainLayer,
     LandSlideLayer,
@@ -160,6 +165,8 @@ export default {
         window.open("https://www.jma.go.jp/jp/typh/", "_blank");
       } else if (this.selectedRisk && this.selectedRisk.type === Risk.TIDE) {
         window.open("https://www.data.jma.go.jp/gmd/kaiyou/db/tide/suisan/suisan.php?stn=TK", "_blank");
+      } else if (this.selectedRisk && this.selectedRisk.type === Risk.FLOOD_ZONE_ESTIMATION_SITE) {
+        window.open("https://midoplat.bosai.go.jp/web/shinsui/index.html", "_blank");
       }
     }
   },
@@ -271,6 +278,9 @@ export default {
   left: 50%;
   -webkit-transform: translateX(-50%);
   transform: translateX(-50%);
+}
+.leaflet-overlay-pane {
+  z-index: 700!important;
 }
 </style>
 <style lang="scss">

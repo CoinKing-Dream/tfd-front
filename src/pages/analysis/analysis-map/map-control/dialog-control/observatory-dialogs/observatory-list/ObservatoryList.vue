@@ -12,10 +12,10 @@
         </template>
         <template v-else>
           <v-tab href="#chart" class="primary--text">
-            <v-icon>mdi-chart-bar</v-icon>
+            <v-icon small>mdi-chart-bar</v-icon>
           </v-tab>
           <v-tab href="#table" class="primary--text">
-            <v-icon>mdi-table-large</v-icon>
+            <v-icon small>mdi-table-large</v-icon>
           </v-tab>
         </template>
       </v-tabs>
@@ -68,12 +68,16 @@ export default {
 </script>
 <style lang="scss">
 .v-window-item.v-window-item--active > div {
-  height: calc(100vh - 133px);
+  height: calc(100vh - 100px);
   overflow-y: auto;
+}
+.v-tabs-bar {
+  height: 30px;
 }
 </style>
 <style lang="scss" scoped>
 .observatory-list {
   height: 100%;
+
 }
 </style>

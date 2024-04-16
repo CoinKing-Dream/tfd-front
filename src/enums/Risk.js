@@ -60,6 +60,11 @@ export const Risk = {
     key: "riverRiskDistribution",
     string: "河川危険度(気象庁)"
   },
+  FLOOD_ZONE_ESTIMATION_SITE: {
+    index: 12,
+    key: "floodZoneEstimationSite",
+    string: "浸水域推定サイト（訓練用）"
+  },
   getRiskFromIndex(index) {
     return _.find(this, risk => {
       return _.isMatch(risk, { index: index });
